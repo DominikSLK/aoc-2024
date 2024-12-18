@@ -1,19 +1,28 @@
+from collections import defaultdict
+
 def blink(stones):
-    new_stones = []
-    for i in range(len(stones)):
-        if stones[i] == "0":
-            new_stones.append("1")
-        elif len(stones[i]) % 2 == 0:
-            new_stones.append(stones[i][0:len(stones[i])//2])
-            new_stones.append(str(int(stones[i][len(stones[i])//2:])))
+    new_stones = defaultdict(int)
+    for stone in stones:
+        if stone == 0:
+            new_stones[1] += stones[stone]
+        elif len(str(stone)) % 2 == 0:
+            mid = len(str(stone)) // 2
+            left, right = int(str(stone)[:mid]), int(str(stone)[mid:])
+            new_stones[left] += stones[stone]
+            new_stones[right] += stones[stone]
         else:
-            new_stones.append(str(int(stones[i]) * 2024))
+            new_stones[stone * 2024] += stones[stone]
     return new_stones
 
+stones = defaultdict(int)
+
 with open("b.txt") as f:
-    a = f.read().strip().split()
+    for i in f.read().strip().split():
+        stones[int(i)] += 1
 
-for i in range(25):
-    a = blink(a)
+for i in range(75):
+    if i == 25:
+        print(sum(stones.values()))
+    stones = blink(stones)
 
-print(len(a))
+print(sum(stones.values()))
